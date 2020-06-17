@@ -38,7 +38,6 @@ librsvg_@RSVG_API_MAJOR_VERSION@_la_SOURCES = \
 	rsvg-base-file-util.c 	\
 	rsvg-filter.c		\
 	rsvg-filter.h		\
-	rsvg-marker.c		\
 	rsvg-marker.h		\
 	rsvg-mask.c		\
 	rsvg-mask.h		\
@@ -72,6 +71,42 @@ librsvg_@RSVG_API_MAJOR_VERSION@_la_SOURCES = \
 	librsvg-enum-types.h	\
 	$(NULL)
 
+RUST_SOURCES =					\
+    rust/Cargo.toml				\
+    rust/src/drawing_ctx.rs			\
+    rust/src/handle.rs			\
+    rust/src/length.rs			\
+	rust/src/lib.rs				\
+    rust/src/marker.rs			\
+    rust/src/node.rs			\
+    rust/src/path_builder.rs		\
+    rust/src/property_bag.rs		\
+    rust/src/state.rs			\
+    rust/src/strtod.rs
+
+RUST_EXTRA = 					\
+	rust/Cargo.lock
+
+if DEBUG_RELEASE
+CARGO_RELEASE_ARGS=
+else
+CARGO_RELEASE_ARGS=--release
+endif
+
+RUST_LIB=@abs_top_builddir@/target/@RUST_TARGET_SUBDIR@/librsvg_internals.a
+
+check-local:
+	cd $(srcdir)/rust && \
+	CARGO_TARGET_DIR=@abs_top_builddir@/target cargo test
+
+clean-local:
+	cd $(top_srcdir)/rust && \
+	CARGO_TARGET_DIR=@abs_top_builddir@/target cargo clean
+
+@abs_top_builddir@/target/@RUST_TARGET_SUBDIR@/librsvg_internals.a: $(RUST_SOURCES)
+	cd $(top_srcdir)/rust && \
+	CARGO_TARGET_DIR=@abs_top_builddir@/target cargo build --verbose $(CARGO_RELEASE_ARGS)
+
 librsvg_@RSVG_API_MAJOR_VERSION@_la_CPPFLAGS = \
 	-I$(top_srcdir) 			\
 	-I$(top_builddir) 			\
@@ -95,7 +130,8 @@ librsvg_@RSVG_API_MAJOR_VERSION@_la_LDFLAGS = \
 
 librsvg_@RSVG_API_MAJOR_VERSION@_la_LIBADD = \
 	$(LIBRSVG_LIBS) 	\
-	$(LIBM)
+	$(LIBM)			\
+	$(RUST_LIB)
 
 librsvgincdir = $(includedir)/librsvg-$(RSVG_API_VERSION)/librsvg
 librsvginc_HEADERS = 	\
@@ -157,6 +193,8 @@ rsvg_view_3_LDFLAGS += -mwindows
 endif # OS_WIN32
 
 EXTRA_DIST =				\
+    $(RUST_SOURCES)			\
+    $(RUST_EXTRA)			\
 	librsvg.doap			\
 	AUTHORS				\
 	NEWS				\

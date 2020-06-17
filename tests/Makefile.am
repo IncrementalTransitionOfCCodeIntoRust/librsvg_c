@@ -38,6 +38,8 @@ dist_installed_test_data =				\
 	$(wildcard $(srcdir)/fixtures/reftests/*.png) 	\
 	$(wildcard $(srcdir)/fixtures/reftests/bugs*.svg) 	\
 	$(wildcard $(srcdir)/fixtures/reftests/bugs*.png) 	\
+	$(wildcard $(srcdir)/fixtures/reftests/svg1.1/*.svg)	\
+	$(wildcard $(srcdir)/fixtures/reftests/svg1.1/*.png)	\
 	fixtures/dimensions/bug564527.svg		\
 	fixtures/dimensions/bug614018.svg		\
 	fixtures/dimensions/bug612951.svg		\

@@ -228,8 +228,6 @@ rsvg_standard_element_start (RsvgHandle * ctx, const char *name, RsvgPropertyBag
         newnode = rsvg_new_clip_path ();
     else if (!strcmp (name, "image"))
         newnode = rsvg_new_image ();
-    else if (!strcmp (name, "marker"))
-        newnode = rsvg_new_marker ();
     else if (!strcmp (name, "stop"))
         newnode = rsvg_new_stop ();
     else if (!strcmp (name, "pattern"))
@@ -304,7 +302,7 @@ rsvg_standard_element_start (RsvgHandle * ctx, const char *name, RsvgPropertyBag
     else if (!strcmp (name, "tref"))
         newnode = rsvg_new_tref ();
     else {
-		/* hack for bug 401115. whenever we encounter a node we don't understand, push it into a group. 
+		/* hack for bug 401115. whenever we encounter a node we don't understand, push it into a group.
 		   this will allow us to handle things like conditionals properly. */
 		newnode = rsvg_new_group ();
 	}
@@ -946,7 +944,7 @@ rsvg_processing_instruction (void *ctx, const xmlChar * target, const xmlChar * 
                                                                 &mime_type,
                                                                 &style_data_len,
                                                                 NULL);
-                        if (style_data && 
+                        if (style_data &&
                             mime_type &&
                             strcmp (mime_type, "text/css") == 0) {
                             rsvg_parse_cssbuffer (handle, style_data, style_data_len);
@@ -1059,7 +1057,7 @@ rsvg_handle_set_base_uri (RsvgHandle * handle, const char *base_uri)
     if (base_uri == NULL)
 	return;
 
-    if (rsvg_path_is_uri (base_uri)) 
+    if (rsvg_path_is_uri (base_uri))
         uri = g_strdup (base_uri);
     else
         uri = rsvg_get_base_uri_from_filename (base_uri);
@@ -1242,7 +1240,7 @@ rsvg_drawing_ctx_free (RsvgDrawingCtx * handle)
 
     g_warn_if_fail (handle->acquired_nodes == NULL);
     g_slist_free (handle->acquired_nodes);
-	
+
     if (handle->pango_context != NULL)
         g_object_unref (handle->pango_context);
 
@@ -1446,7 +1444,7 @@ rsvg_handle_get_dimensions_sub (RsvgHandle * handle, RsvgDimensionData * dimensi
                                          bbox.rect.height + bbox.rect.y * 2,
                                          12) + 0.5);
     }
-    
+
     dimension_data->em = dimension_data->width;
     dimension_data->ex = dimension_data->height;
 
@@ -1553,7 +1551,7 @@ bail:
     return ret;
 }
 
-/** 
+/**
  * rsvg_handle_has_sub:
  * @handle: a #RsvgHandle
  * @id: an element's id within the SVG
@@ -1576,7 +1574,7 @@ rsvg_handle_has_sub (RsvgHandle * handle,
     return rsvg_defs_lookup (handle->priv->defs, id) != NULL;
 }
 
-/** 
+/**
  * rsvg_set_default_dpi:
  * @dpi: Dots Per Inch (aka Pixels Per Inch)
  *
@@ -1592,7 +1590,7 @@ rsvg_set_default_dpi (double dpi)
     rsvg_set_default_dpi_x_y (dpi, dpi);
 }
 
-/** 
+/**
  * rsvg_set_default_dpi_x_y:
  * @dpi_x: Dots Per Inch (aka Pixels Per Inch)
  * @dpi_y: Dots Per Inch (aka Pixels Per Inch)
@@ -1688,16 +1686,16 @@ rsvg_handle_set_dpi_x_y (RsvgHandle * handle, double dpi_x, double dpi_y)
  *     RsvgDimensionData dimensions;
  *     double x_factor, y_factor;
  *     double scale_factor;
- * 
+ *
  *     rsvg_handle_get_dimensions (handle, &dimensions);
- * 
+ *
  *     x_factor = (double) width / dimensions.width;
  *     y_factor = (double) height / dimensions.height;
- * 
+ *
  *     scale_factor = MIN (x_factor, y_factor);
- * 
+ *
  *     cairo_scale (cr, scale_factor, scale_factor);
- * 
+ *
  *     rsvg_handle_render_cairo (handle, cr);
  * }
  * ]|
@@ -2107,7 +2105,6 @@ void
 rsvg_render_path (RsvgDrawingCtx * ctx, const cairo_path_t *path)
 {
     ctx->render->render_path (ctx, path);
-    rsvg_render_markers (ctx, path);
 }
 
 void
@@ -2392,7 +2389,7 @@ _rsvg_handle_resolve_uri (RsvgHandle *handle,
     return resolved_uri;
 }
 
-char * 
+char *
 _rsvg_handle_acquire_data (RsvgHandle *handle,
                            const char *url,
                            char **content_type,
@@ -2405,10 +2402,10 @@ _rsvg_handle_acquire_data (RsvgHandle *handle,
     uri = _rsvg_handle_resolve_uri (handle, url);
 
     if (_rsvg_handle_allow_load (handle, uri, error)) {
-        data = _rsvg_io_acquire_data (uri, 
-                                      rsvg_handle_get_base_uri (handle), 
-                                      content_type, 
-                                      len, 
+        data = _rsvg_io_acquire_data (uri,
+                                      rsvg_handle_get_base_uri (handle),
+                                      content_type,
+                                      len,
                                       handle->priv->cancellable,
                                       error);
     } else {
@@ -2431,9 +2428,9 @@ _rsvg_handle_acquire_stream (RsvgHandle *handle,
     uri = _rsvg_handle_resolve_uri (handle, url);
 
     if (_rsvg_handle_allow_load (handle, uri, error)) {
-        stream = _rsvg_io_acquire_stream (uri, 
-                                          rsvg_handle_get_base_uri (handle), 
-                                          content_type, 
+        stream = _rsvg_io_acquire_stream (uri,
+                                          rsvg_handle_get_base_uri (handle),
+                                          content_type,
                                           handle->priv->cancellable,
                                           error);
     } else {

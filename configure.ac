@@ -29,6 +29,13 @@ AC_SUBST([RSVG_API_MAJOR_VERSION])
 AC_SUBST([RSVG_API_MINOR_VERSION])
 AC_SUBST([RSVG_API_VERSION_U],[AS_TR_SH([$RSVG_API_VERSION])])
 
+# ===========================================================================
+
+AC_SUBST([RSVG_LT_VERSION_INFO],[rsvg_lt_version_info])
+AC_SUBST([LIBRSVG_MAJOR_VERSION],[rsvg_major_version])
+AC_SUBST([LIBRSVG_MINOR_VERSION],[rsvg_minor_version])
+AC_SUBST([LIBRSVG_MICRO_VERSION],[rsvg_micro_version])
+
 dnl ===========================================================================
 
 GLIB_REQUIRED=2.12.0
@@ -39,13 +46,6 @@ PANGOCAIRO_REQUIRED=1.32.6
 GDK_PIXBUF_REQUIRED=2.20
 GTK3_REQUIRED=3.10.0
 CROCO_REQUIRED=0.6.1
-
-# ===========================================================================
-
-AC_SUBST([RSVG_LT_VERSION_INFO],[rsvg_lt_version_info])
-AC_SUBST([LIBRSVG_MAJOR_VERSION],[rsvg_major_version])
-AC_SUBST([LIBRSVG_MINOR_VERSION],[rsvg_minor_version])
-AC_SUBST([LIBRSVG_MICRO_VERSION],[rsvg_micro_version])
 
 dnl ===========================================================================
 
@@ -63,6 +63,17 @@ PKG_PROG_PKG_CONFIG
 
 LT_INIT([win32-dll])
 LT_LIB_M
+
+dnl ===========================================================================
+
+AC_CHECK_PROG(CARGO, [cargo], [yes], [no])
+AS_IF(test x$CARGO = xno,
+    AC_MSG_ERROR([cargo is required.  Please install the Rust toolchain from https://www.rust-lang.org/])
+)
+AC_CHECK_PROG(RUSTC, [rustc], [yes], [no])
+AS_IF(test x$RUSTC = xno,
+    AC_MSG_ERROR([rustc is required.  Please install the Rust toolchain from https://www.rust-lang.org/])
+)
 
 dnl ===========================================================================
 
@@ -176,6 +187,8 @@ AC_SUBST([gdk_pixbuf_cache_file])
 
 AM_CONDITIONAL([ENABLE_PIXBUF_LOADER],[test "$enable_pixbuf_loader" = "yes"])
 
+AM_CONDITIONAL(CROSS_COMPILING, test $cross_compiling = yes)
+
 ##########################################################
 # Check for -Bsymbolic-functions linker flag used to avoid
 # intra-library PLT jumps, if available.
@@ -229,6 +242,28 @@ fi
 AM_CONDITIONAL([BUILD_MISC_TOOLS], [test "x$build_misc_tools" = "xyes"])
 
 dnl ===========================================================================
+dnl Specify --enable-debug to make a development release.  By default,
+dnl we build in public release mode.
+
+AC_ARG_ENABLE(debug,
+              AC_HELP_STRING([--enable-debug],
+                             [Build Rust code with debugging information [default=no]]),
+              [debug_release=$enableval],
+	      [debug_release=no])
+
+AC_MSG_CHECKING(whether to build Rust code with debugging information)
+if test "x$debug_release" = "xyes" ; then
+	AC_MSG_RESULT(yes)
+	RUST_TARGET_SUBDIR=debug
+else
+	AC_MSG_RESULT(no)
+	RUST_TARGET_SUBDIR=release
+fi
+AM_CONDITIONAL([DEBUG_RELEASE], [test "x$debug_release" = "xyes"])
+
+AC_SUBST([RUST_TARGET_SUBDIR])
+
+dnl ===========================================================================
 dnl Build introspectable bindings
 
 # No automagic please!
@@ -257,6 +292,13 @@ glib_DEFUN([GLIB_LC_MESSAGES],
   fi])
 
 GLIB_LC_MESSAGES
+
+dnl ===========================================================================
+
+# Check whether MSVC toolset is explicitly set
+
+AM_CONDITIONAL(MSVC_BASE_NO_TOOLSET_SET, [test x$MSVC_BASE_TOOLSET = x])
+AM_CONDITIONAL(MSVC_NO_TOOLSET_SET, [test x$MSVC_TOOLSET = x])
 
 dnl ===========================================================================
 
@@ -294,7 +336,9 @@ librsvg-$VERSION
 
 	prefix:                         ${prefix}
 	compiler:                       ${CC}
-	
+
+        Debugging information for Rust: ${debug_release}
+
 	Build introspectable bindings:  ${found_introspection}
 	Build Vala bindings:            ${enable_vala}
 	Build GdkPixbuf loader:         ${enable_pixbuf_loader}
