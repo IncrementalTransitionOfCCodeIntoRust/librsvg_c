@@ -30,22 +30,9 @@
 
 G_BEGIN_DECLS 
 
-typedef struct _RsvgMarker RsvgMarker;
-
-struct _RsvgMarker {
-    RsvgNode super;
-    gboolean bbox;
-    RsvgLength refX, refY, width, height;
-    double orient;
-    gint preserve_aspect_ratio;
-    gboolean orientAuto;
-    RsvgViewBox vbox;
-};
-
+/* Implemented in rust/src/marker.rs */
 G_GNUC_INTERNAL
-RsvgNode    *rsvg_new_marker	    (void);
-G_GNUC_INTERNAL
-void	     rsvg_render_markers    (RsvgDrawingCtx *ctx, const cairo_path_t *path);
+RsvgNode *rsvg_node_marker_new (const char *element_name, RsvgNode *parent);
 
 G_END_DECLS
 
