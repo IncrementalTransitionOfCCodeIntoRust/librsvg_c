@@ -72,17 +72,21 @@ librsvg_@RSVG_API_MAJOR_VERSION@_la_SOURCES = \
 	$(NULL)
 
 RUST_SOURCES =					\
-    rust/Cargo.toml				\
-    rust/src/drawing_ctx.rs			\
-    rust/src/handle.rs			\
-    rust/src/length.rs			\
+	rust/Cargo.toml				\
+	rust/src/aspect_ratio.rs	\
+	rust/src/drawing_ctx.rs		\
+	rust/src/handle.rs			\
+	rust/src/length.rs			\
 	rust/src/lib.rs				\
-    rust/src/marker.rs			\
-    rust/src/node.rs			\
-    rust/src/path_builder.rs		\
-    rust/src/property_bag.rs		\
-    rust/src/state.rs			\
-    rust/src/strtod.rs
+	rust/src/marker.rs			\
+	rust/src/node.rs			\
+	rust/src/parsers.rs			\
+	rust/src/path_builder.rs	\
+	rust/src/property_bag.rs	\
+	rust/src/state.rs			\
+	rust/src/strtod.rs			\
+	rust/src/util.rs			\
+	rust/src/viewbox.rs
 
 RUST_EXTRA = 					\
 	rust/Cargo.lock
