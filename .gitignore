@@ -65,8 +65,12 @@ librsvg-2.0.vapi
 
 # own excludes
 ABOUT-NLS
+build/win32/*
+ChangeLog
 m4/*.m4
 po/*
 rust/target/*
+*.tar.bz2
 target/*
 test-driver
+
