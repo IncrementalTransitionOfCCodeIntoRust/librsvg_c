@@ -62,3 +62,14 @@ tools/test-memory
 Rsvg-2.0.gir
 Rsvg-2.0.typelib
 librsvg-2.0.vapi
+
+# own excludes
+*.tar.bz2
+ABOUT-NLS
+build/win32/*
+ChangeLog
+m4/*.m4
+po/*
+rust/target/*
+target/*
+test-driver
